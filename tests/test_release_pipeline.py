@@ -53,6 +53,18 @@ class ReleaseTests(unittest.TestCase):
                 return subprocess.CompletedProcess(argv, 1, json.dumps({'status': '403'}), 'Forbidden')
             if '/git/ref/tags/' in argv[2]:
                 body = {'object': {'type': 'commit', 'sha': self.remote_commit}}
+            elif '/releases/tags/' in argv[2]:
+                if self.release is not None and not self.release.get('draft'):
+                    body = self.release
+                else:
+                    return subprocess.CompletedProcess(argv, 1, json.dumps({'status': '404'}), 'Not Found')
+            elif argv[2].endswith('/releases'):
+                body = [self.release] if self.release is not None else []
+            elif '/releases/' in argv[2]:
+                if self.release is not None:
+                    body = self.release
+                else:
+                    return subprocess.CompletedProcess(argv, 1, json.dumps({'status': '404'}), 'Not Found')
             elif self.release is not None:
                 body = self.release
             else:
@@ -63,7 +75,7 @@ class ReleaseTests(unittest.TestCase):
         if action == 'create':
             self.assertIn('--draft', argv)
             self.assertIn('--verify-tag', argv)
-            self.release = {'draft': True, 'html_url': 'https://example.test/release', 'assets': []}
+            self.release = {'id': 1, 'tag_name': self.env['RELEASE_TAG'], 'draft': True, 'html_url': 'https://example.test/release', 'assets': []}
         elif action == 'upload':
             if self.fail_upload:
                 raise subprocess.CalledProcessError(1, argv)
@@ -93,17 +105,17 @@ class ReleaseTests(unittest.TestCase):
         self.assertFalse(self.release['draft'])
 
     def test_draft_can_resume_after_interruption(self):
-        self.release = {'draft': True, 'html_url': 'https://example.test/release', 'assets': []}
+        self.release = {'id': 1, 'tag_name': 'v1.1.0', 'draft': True, 'html_url': 'https://example.test/release', 'assets': []}
         self.execute()
         self.assertEqual(self.writes, ['upload', 'edit'])
 
     def test_identical_published_release_is_not_modified(self):
-        self.release = {'draft': False, 'html_url': 'https://example.test/release', 'assets': self.assets()}
+        self.release = {'id': 1, 'tag_name': 'v1.1.0', 'draft': False, 'html_url': 'https://example.test/release', 'assets': self.assets()}
         self.execute()
         self.assertEqual(self.writes, [])
 
     def test_different_published_assets_are_never_overwritten(self):
-        self.release = {'draft': False, 'html_url': 'https://example.test/release', 'assets': []}
+        self.release = {'id': 1, 'tag_name': 'v1.1.0', 'draft': False, 'html_url': 'https://example.test/release', 'assets': []}
         with self.assertRaisesRegex(ValueError, 'asset failed'):
             self.execute()
         self.assertEqual(self.writes, [])

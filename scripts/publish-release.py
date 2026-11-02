@@ -67,13 +67,24 @@ def verify_assets(release):
             raise ValueError('GitHub asset failed verification: ' + name)
 
 
+def get_release():
+    rel = api('repos/' + repo + '/releases/tags/' + quote(tag, safe=''), missing_ok=True)
+    if rel:
+        return rel
+    releases = api('repos/' + repo + '/releases', missing_ok=True)
+    if isinstance(releases, list):
+        for item in releases:
+            if item.get('tag_name') == tag:
+                return item
+    return None
+
+
 ref = api('repos/' + repo + '/git/ref/tags/' + quote(tag, safe=''))['object']
 while ref['type'] == 'tag':
     ref = api('repos/' + repo + '/git/tags/' + ref['sha'])['object']
 if ref['type'] != 'commit' or ref['sha'] != info['commit']:
     raise ValueError('Remote tag does not match the built commit')
-release_path = 'repos/' + repo + '/releases/tags/' + quote(tag, safe='')
-release = api(release_path, missing_ok=True)
+release = get_release()
 if release and not release['draft']:
     verify_assets(release)
     print('Release already published with identical assets; leaving it unchanged: ' + release['html_url'])
@@ -83,8 +94,14 @@ if not release:
     if '-' in info['version']:
         arguments.append('--prerelease')
     gh(*arguments)
+    release = get_release()
+    if not release:
+        raise RuntimeError('Failed to locate draft release after creation')
 # Drafts can be resumed after interrupted uploads. Published releases are never clobbered.
 gh('release', 'upload', tag, *[str(dist / name) for name in expected], '--repo', repo, '--clobber')
-verify_assets(api(release_path))
+release = api('repos/' + repo + '/releases/' + str(release['id'])) if release.get('id') else get_release()
+verify_assets(release)
 gh('release', 'edit', tag, '--repo', repo, '--draft=false')
-print('Published verified release: ' + api(release_path)['html_url'])
+published = get_release()
+print('Published verified release: ' + published['html_url'])
+

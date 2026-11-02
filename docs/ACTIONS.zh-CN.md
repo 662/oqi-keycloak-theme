@@ -12,7 +12,7 @@
 1. 主题注册名、继承关系、版本号与 changelog 一致性。
 2. 中英文消息键、占位符、模板和 CSS 引用的资源文件。
 3. 原生登录表单的 POST 地址约定与 JavaScript 语法。
-4. 使用 Keycloak 21.1.2 配套的 **FreeMarker 2.3.31** 解析五个自定义模板。依赖 JAR 从 Maven Central 下载，并核对固定 SHA-256。
+4. 使用 Keycloak 21.1.2 配套的 **FreeMarker 2.3.31** 解析五个自定义模板，并执行 9 个 Realm 标题回退与 HTML 转义测试。依赖 JAR 从 Maven Central 下载，并核对固定 SHA-256。
 5. 13 个不访问 GitHub 的发布分支测试：版本不匹配、提交不匹配、已发布版本保护、文件损坏、上传中断、草稿恢复等。
 6. 连续构建两次 JAR，确保相同源码生成相同字节；检查 JAR 的资源目录和源文件内容，生成 ZIP、JAR、校验文件和构建提交记录。
 7. 发布脚本 dry-run，只验证输入，不创建 Release。

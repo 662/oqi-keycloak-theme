@@ -70,7 +70,9 @@ JAR 包含 `META-INF/keycloak-themes.json`、明确的资源目录和全部主�
 
 目录模式直接修改 `themes/oqi/login/`；JAR 模式修改后重新打包。
 
-- 品牌名称：`theme.properties` 中的 `oqiBrand=OQI.ME`。
+- 左上角标题：在管理台 **Realm settings → General → Display name** 中设置。自定义 Display name 优先；未设置、空白或与 Realm 内部名相同时，回退到 `theme.properties` 中的 `oqiBrand=OQI.ME`。
+- 这是 Keycloak 21.1 的模板数据限制：模板无法区分「未设置」和「明确设置为内部名」。如需显示与内部名相同的标题，可把 `oqiBrand` 设为该值。
+- 浏览器标签页标题、页脚和门牌不随 Realm 名称改变，仍在各自的文案或素材中修改。
 - 隐藏左侧插图区域：`oqiShowIllustration=false`。
 - 小屋图片：`resources/img/home-oqi.png`。
 - 中文文案：`messages/messages_zh_CN.properties`。

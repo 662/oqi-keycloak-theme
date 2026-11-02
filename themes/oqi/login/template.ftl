@@ -1,4 +1,14 @@
 <#-- OQI.ME layout. Derived from Keycloak 21.1.2 template.ftl (Apache-2.0). -->
+<#-- RealmBean 21.1 falls back to realm.name when no display name is set. -->
+<#function brandLabel realm properties>
+    <#local displayName = (realm.displayName!'')?trim>
+    <#local internalName = (realm.name!'')>
+    <#if displayName?has_content && displayName != internalName>
+        <#return displayName>
+    </#if>
+    <#local fallback = (properties.oqiBrand!'OQI.ME')?trim>
+    <#return fallback?has_content?then(fallback, 'OQI.ME')>
+</#function>
 <#macro registrationLayout bodyClass="" displayInfo=false displayMessage=true displayRequiredFields=false>
 <!DOCTYPE html>
 <html class="${properties.kcHtmlClass!}" lang="${(locale.currentLanguageTag)!'en'}">
@@ -39,7 +49,7 @@
 <main class="oqi-layout<#if (properties.oqiShowIllustration!'true') == 'false'> oqi-no-illustration</#if>">
     <section class="oqi-landscape" aria-label="${msg('oqiPrivateSpace')}">
         <div class="oqi-grain" aria-hidden="true"></div>
-        <div class="oqi-brand"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M4 15 16 5l12 10v12H4V15Z" stroke="currentColor" stroke-width="1.8"/><path d="M11 27V14h10v13M16 14v13" stroke="currentColor" stroke-width="1.8"/></svg><span>${properties.oqiBrand!'OQI.ME'}</span><small>${msg('oqiBrandTagline')}</small></div>
+        <div class="oqi-brand"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M4 15 16 5l12 10v12H4V15Z" stroke="currentColor" stroke-width="1.8"/><path d="M11 27V14h10v13M16 14v13" stroke="currentColor" stroke-width="1.8"/></svg><span title="${brandLabel(realm, properties)}">${brandLabel(realm, properties)}</span><small>${msg('oqiBrandTagline')}</small></div>
         <img class="oqi-art" src="${url.resourcesPath}/img/home-oqi.png" alt="${msg('oqiIllustrationAlt')}" />
         <div class="oqi-intro"><div class="oqi-eyebrow">${msg('oqiEyebrow')}</div><h2>${msg('oqiHeadline')}</h2><p>${msg('oqiDescription')}</p></div>
         <div class="oqi-landscape-footer"><span>${msg('oqiPersonalCloud')}</span><span><i class="oqi-dot" aria-hidden="true"></i>${msg('oqiMadeForYou')}</span></div>

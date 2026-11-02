@@ -82,11 +82,14 @@ python3 build-jar.py
 
 | 内容 | 文件 |
 | --- | --- |
-| 品牌、是否展示插图 | `theme.properties` 中的 `oqiBrand`、`oqiShowIllustration` |
+| 左上角品牌 | 优先使用 Realm 的 Display name；默认值回退到 `oqiBrand`（`OQI.ME`） |
+| 是否展示插图 | `theme.properties` 中的 `oqiShowIllustration` |
 | 中文文案 | `messages/messages_zh_CN.properties` |
 | 英文文案 | `messages/messages_en.properties` |
 | 配色与布局 | `resources/css/oqi.css` |
 | 小屋插图 | `resources/img/home-oqi.png` |
+
+管理台 **Realm settings → General → Display name** 可设置左上角标题。Keycloak 21.1 会将未设置的 Display name 替换为 Realm 内部名，因此本主题将「与内部名相同」也视为默认值并使用 `oqiBrand`；如需显示相同名称，可把 `oqiBrand` 设为该值。浏览器标签页标题和页脚仍由语言包控制。
 
 修改消息文件时保留 `# encoding: UTF-8` 和 `{0}` 等占位符。品牌域名不会自动更改认证服务地址、DNS 或客户端回调配置。
 

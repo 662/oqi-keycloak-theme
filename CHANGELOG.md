@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.1
+
+- Read the top-left brand from the realm Display name when it differs from the internal realm name.
+- Fall back to `oqiBrand` (default `OQI.ME`) for the Keycloak 21.1 default name, missing names, or blank names.
+- Render display names as escaped plain text and truncate long labels without breaking the layout.
+- Test branding precedence and HTML escaping with the real FreeMarker engine.
+
 ## 1.1.0
 
 First public release of the OQI.ME theme.

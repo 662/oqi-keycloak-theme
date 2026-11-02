@@ -62,3 +62,10 @@ OTP 与授权等认证结果由 Keycloak 返回；主题脚本没有拦截认证
 OQI 品牌版验证：5 个自定义模板解析通过；改名后中英文消息键和资源引用一致；本地 21.1.2 目录版已检查 OQI.ME 标题、品牌、页脚、门牌插图、密码显示与深浅色按钮；JAR 注册信息为 oqi，包内无旧 haven 资源路径。
 
 独立 JAR 启动验证完成：移除目录主题后仅加载 oqi JAR，页面标题、品牌、脚本交互及资源路径正常；CSS、JS 和门牌 PNG 的 HTTP 内容与交付源码逐字节一致。
+
+## 1.1.1 Realm 标题
+
+- 核对 Keycloak 21.1.2 的 `RealmBean.getDisplayName()`：未配置时会返回 Realm 内部名称。
+- 使用同版本 FreeMarker 验证 9 个标题优先级、空白/缺失回退、大小写与 HTML 转义场景；这组测试已纳入 CI 的模板解析步骤。
+- 本地独立 Keycloak 21.1.2、JAR 安装方式下，两个真实测试 Realm 验证通过：Display name 为「家庭空间」时显示「家庭空间」；未配置时显示「OQI.ME」。
+- Display name 与内部名称相同的情况按默认值处理，使用 `oqiBrand`。该限制已在安装文档说明。

@@ -18,3 +18,6 @@ a,.oqi-link-button{color:var(--link,var(--accent))}.oqi-dark{--link:#b5cba5}.oqi
 
 /* OQI.ME wordmark: warm colour, quiet spacing. */
 .oqi-brand>span{font-weight:550;letter-spacing:.10em}.oqi-brand small{letter-spacing:1.3px}
+
+/* Realm display names can be longer than the default wordmark. */
+.oqi-brand>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

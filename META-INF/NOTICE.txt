@@ -1,0 +1,9 @@
+OQI.ME login theme for Keycloak 21.1
+
+The customized FreeMarker layout and login/error templates are derived from
+Keycloak 21.1.2 (https://github.com/keycloak/keycloak), licensed under Apache-2.0.
+Authentication templates that are not overridden are inherited at runtime from
+the installed Keycloak theme; they are not bundled in this archive.
+
+Original OQI.ME home illustration, styling, and presentation JavaScript are
+provided under Apache-2.0 with this theme.

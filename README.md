@@ -2,7 +2,7 @@
 
 一个温馨的 Keycloak 登录主题。暖灯小屋、绿植和打盹的小猫，让每一次登录都像回家。
 
-<p align="center"><img src="themes/oqi/login/resources/img/home-oqi.png" alt="Warm watercolor cottage with an oqi.me wooden nameplate" width="620"></p>
+<p align="center"><img src="docs/screenshots/login-light.jpg" alt="OQI.ME Keycloak 桌面浅色登录页 / Desktop light login" width="1000"></p>
 
 **主题名：`oqi` · 适配 Keycloak 21.1.x · 实测 21.1.2 · Apache-2.0**
 
@@ -14,6 +14,21 @@
 - 保留 Keycloak 原生认证：注册、密码找回、OTP、邮箱验证、授权和退出等由 Realm 配置控制。
 - 字段错误、全局提示、会话过期及回调地址错误与真实服务端状态联动。
 - 无前端构建依赖，无外部 CDN；脚本不拦截认证提交，也不存储凭据。
+
+## 界面预览 / Screenshots
+
+以下截图来自运行于 Keycloak 21.1.2 的真实主题。
+
+| 深色模式 / Dark mode | 错误页 / Invalid redirect |
+| --- | --- |
+| [![桌面深色登录页](docs/screenshots/login-dark.jpg)](docs/screenshots/login-dark.jpg) | [![无效回调地址错误页](docs/screenshots/invalid-redirect.jpg)](docs/screenshots/invalid-redirect.jpg) |
+
+<details>
+<summary>手机布局 / Mobile layout</summary>
+
+<p align="center"><img src="docs/screenshots/login-mobile.jpg" alt="OQI.ME 手机登录页 / Mobile login" width="320"></p>
+
+</details>
 
 ## 下载与安装
 

@@ -1,5 +1,7 @@
 # OQI.ME · Keycloak Login Theme
 
+[![CI](https://github.com/662/oqi-keycloak-theme/actions/workflows/ci.yml/badge.svg)](https://github.com/662/oqi-keycloak-theme/actions/workflows/ci.yml)
+
 一个温馨的 Keycloak 登录主题。暖灯小屋、绿植和打盹的小猫，让每一次登录都像回家。
 
 <p align="center"><img src="docs/screenshots/login-light.jpg" alt="OQI.ME Keycloak 桌面浅色登录页 / Desktop light login" width="1000"></p>
@@ -66,6 +68,13 @@ python3 build-jar.py
 ```
 
 输出 `providers/oqi-keycloak-21.1.jar`，包含主题注册信息和静态资源目录。
+
+## 自动检查与发布
+
+- **CI**：每次主分支提交和 PR 自动校验模板、语言包、资源与安装包，并提供 ZIP/JAR 构建产物；也可在 Actions 页面手动运行。
+- **Release**：推送与清单版本一致的 `v*` 标签后，先执行 CI，再校验并发布 ZIP、JAR 和 SHA-256 文件。不会自动覆盖已公开版本。
+
+详细触发方式、发布步骤与权限设计见 [Actions 说明](docs/ACTIONS.zh-CN.md)。
 
 ## 自定义
 

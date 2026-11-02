@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-and-build:
+    name: Validate theme and build install packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Validate theme contracts and JavaScript
+        run: |
+          python3 scripts/validate-theme.py
+          python3 -m unittest discover -s tests -v
+          node --check themes/oqi/login/resources/js/oqi.js
+      - name: Parse FreeMarker templates with Keycloak 21.1.2 dependency
+        env:
+          FREEMARKER_SHA256: 68ecb4c5aa4934b7b50c38b0e495d7589e52dfb9d28b964ac2008b72090bfaae
+        run: |
+          curl --fail --silent --show-error --location --retry 3 \
+            https://repo.maven.apache.org/maven2/org/freemarker/freemarker/2.3.31/freemarker-2.3.31.jar \
+            --output "$RUNNER_TEMP/freemarker.jar"
+          printf '%s  %s\n' "$FREEMARKER_SHA256" "$RUNNER_TEMP/freemarker.jar" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/template-validator"
+          javac -cp "$RUNNER_TEMP/freemarker.jar" -d "$RUNNER_TEMP/template-validator" scripts/ValidateTemplates.java
+          java -cp "$RUNNER_TEMP/template-validator:$RUNNER_TEMP/freemarker.jar" ValidateTemplates themes/oqi/login
+      - name: Validate release tag
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: python3 -c 'from pathlib import Path; import os; from scripts.theme_lib import version, check_tag; check_tag(os.environ["RELEASE_TAG"], version(Path(".")))'
+      - name: Build reproducible ZIP and JAR
+        run: python3 scripts/package-release.py
+      - name: Verify release publishing inputs without writing to GitHub
+        run: python3 scripts/publish-release.py --dry-run
+      - name: Upload install packages
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: oqi-theme-${{ github.sha }}
+          path: |
+            dist/oqi-keycloak-21.1.jar
+            dist/oqi-keycloak-21.1.zip
+            dist/SHA256SUMS.txt
+            dist/build-info.json
+            dist/RELEASE_NOTES.md
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
